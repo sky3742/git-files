@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Git Repos</title>
+  <style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;background:#f8f9fa;color:#1f2328;min-height:100vh;display:flex;justify-content:center;padding:3rem 1.5rem;}
+.container{max-width:720px;width:100%;}
+.header{display:flex;align-items:center;gap:0.75rem;margin-bottom:2rem;}
+h1{font-size:1.75rem;font-weight:600;color:#1f2328;}
+.repo-list{display:flex;flex-direction:column;gap:0.5rem;}
+.repo-row{display:flex;align-items:center;gap:1rem;padding:0.875rem 1.25rem;background:#fff;border:1px solid #d1d9e0;border-radius:10px;transition:border-color 0.15s,
+        box-shadow 0.15s;}
+.repo-row:hover{border-color:#0969da;box-shadow:0 2px 8px rgba(0, 0, 0, 0.06);}
+.repo-name{font-weight:600;color:#0969da;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.repo-size{color:#656d76;font-size:0.8rem;white-space:nowrap;}
+.spacer{flex:1;}
+.branch-select{font-size:0.8rem;padding:0.35rem 0.6rem;border:1px solid #d1d9e0;border-radius:6px;background:#f8f9fa;color:#1f2328;cursor:pointer;outline:none;}
+.branch-select:focus{border-color:#0969da;}
+.copy-btn{display:inline-flex;align-items:center;gap:0.35rem;padding:0.35rem 0.75rem;background:#238636;border:none;border-radius:6px;color:#fff;font-size:0.8rem;font-weight:500;cursor:pointer;white-space:nowrap;transition:background 0.15s;}
+.copy-btn:hover{background:#2ea043;}
+.empty{text-align:center;padding:4rem 1rem;color:#656d76;background:#fff;border:1px solid #d1d9e0;border-radius:10px;}
+.repo-row~.empty{display:none;}
+</style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Repositories</h1>
+    </div>
+    <div class="repo-list" id="repos">
+      <div class="empty">No repositories yet</div>
+    </div>
+  </div>
+
+  <template id="repo-tpl">
+    <div class="repo-row">
+      <div class="repo-name" data-field="name"></div>
+      <div class="repo-size" data-field="size"></div>
+      <div class="spacer"></div>
+      <select class="branch-select" data-field="select"></select>
+      <button class="copy-btn" onclick="copyUrl(this)">
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor">
+          <path
+            d="M0 6.75C0 5.784.784 5 1.75 5h1.5a.75.75 0 0 1 0 1.5h-1.5a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-1.5a.75.75 0 0 1 1.5 0v1.5A1.75 1.75 0 0 1 9.25 16h-7.5A1.75 1.75 0 0 1 0 14.25Z" />
+          <path
+            d="M5 1.75C5 .784 5.784 0 6.75 0h7.5C15.216 0 16 .784 16 1.75v7.5A1.75 1.75 0 0 1 14.25 11h-7.5A1.75 1.75 0 0 1 5 9.25Zm1.75-.25a.25.25 0 0 0-.25.25v7.5c0 .138.112.25.25.25h7.5a.25.25 0 0 0 .25-.25v-7.5a.25.25 0 0 0-.25-.25Z" />
+        </svg>
+        Copy
+      </button>
+    </div>
+  </template>
+
+  <script>
+    const REPOS = JSON.parse('{{repos}}');
+    const BASE = "{{basePath}}";
+    const tpl = document.getElementById("repo-tpl");
+    const el = document.getElementById("repos");
+    const empty = el.querySelector('.empty');
+    REPOS.forEach((r) => {
+      const row = tpl.content.cloneNode(true);
+      row.querySelector('[data-field="name"]').textContent = r.name;
+      row.querySelector('[data-field="size"]').textContent = r.size;
+      const sel = row.querySelector('[data-field="select"]');
+      sel.dataset.base = BASE + "/" + r.name;
+      r.branches.forEach((b) => {
+        const opt = document.createElement("option");
+        opt.value = b;
+        opt.textContent = b;
+        sel.appendChild(opt);
+      });
+      el.insertBefore(row, empty);
+    });
+    function copyUrl(btn) {
+      var s = btn.previousElementSibling;
+      navigator.clipboard.writeText(s.dataset.base + " -b " + s.value);
+      btn.textContent = "Copied!";
+      setTimeout(() => {
+        btn.textContent = "Copy";
+      }, 1500);
+    }
+  </script>
+</body>
+
+</html>
