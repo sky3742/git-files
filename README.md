@@ -53,6 +53,18 @@ Open [http://localhost:7005](http://localhost:7005).
 
 ## Environment Variables
 
+Copy the example env file and adjust values:
+
+```bash
+cp .env.example .env
+```
+
+Run with the env file (built into Node 20.6+, no extra dependency):
+
+```bash
+node --env-file=.env server.js
+```
+
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `PORT` | `7005` | Server port |
@@ -61,8 +73,46 @@ Open [http://localhost:7005](http://localhost:7005).
 
 ## Production
 
-Deployed with PM2 on port 4005.
+### PM2
+
+Environment values live in `ecosystem.config.js` (port 4005).
 
 ```bash
 pm2 start ecosystem.config.js
 ```
+
+### systemd
+
+Run the server as a systemd service:
+
+```ini
+# /etc/systemd/system/git-files.service
+[Unit]
+Description=Git Files
+After=network.target
+
+[Service]
+WorkingDirectory=/opt/git-files
+ExecStart=/usr/bin/node --env-file=/opt/git-files/.env server.js
+Restart=on-failure
+User=git
+
+[Install]
+WantedBy=multi-user.target
+```
+
+```bash
+systemctl enable --now git-files
+```
+
+### Windows (nssm)
+
+[nssm](https://nssm.cc) runs the server as a Windows service (run the shell as Administrator):
+
+```bat
+nssm install GitFiles "C:\Program Files\nodejs\node.exe" --env-file=.env server.js
+nssm set GitFiles AppDirectory C:\git-files
+nssm start GitFiles
+```
+
+`AppDirectory` sets the working directory, so `.env` and `repos` resolve inside `C:\git-files`. Manage with `nssm stop GitFiles`, `nssm restart GitFiles`, or remove with `nssm remove GitFiles confirm`.
