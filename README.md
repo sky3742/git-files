@@ -2,28 +2,6 @@
 
 A lightweight self-hosted Git server with a web UI for browsing repos. Built with [node-git-server](https://github.com/nicolo-ribaudo/node-git-server).
 
-## Setup
-
-```bash
-npm install
-```
-
-## Development
-
-```bash
-node server.js
-```
-
-Open [http://localhost:7005](http://localhost:7005).
-
-## Production
-
-Deployed with PM2 on port 4005.
-
-```bash
-pm2 start ecosystem.config.js
-```
-
 ## Features
 
 - Bare Git repo hosting (push/fetch over HTTP)
@@ -64,6 +42,15 @@ We don't regularly check for feature changes in other products, so this list may
 
 > **Note:** Git Files has no authentication — anyone who can reach the server can push and fetch. Put it behind a reverse proxy with auth, or only expose it on a trusted network.
 
+## Getting Started
+
+```bash
+npm install
+node server.js
+```
+
+Open [http://localhost:7005](http://localhost:7005).
+
 ## Environment Variables
 
 | Variable | Default | Description |
@@ -71,3 +58,11 @@ We don't regularly check for feature changes in other products, so this list may
 | `PORT` | `7005` | Server port |
 | `BASE_PATH` | `/` | URL base path (e.g. `/repos`) |
 | `REPOS_DIR` | `repos` next to `server.js` | Directory holding the bare repositories (absolute, or relative to the working directory) |
+
+## Production
+
+Deployed with PM2 on port 4005.
+
+```bash
+pm2 start ecosystem.config.js
+```
