@@ -1,2 +1,4 @@
 node_modules
 repos
+.env
+.DS_Store

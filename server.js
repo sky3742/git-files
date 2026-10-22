@@ -6,7 +6,8 @@ const fs = require('fs');
 
 const port = process.env.PORT || 7005;
 const basePath = process.env.BASE_PATH || '/';
-const repos = new Git(join(__dirname, 'repos'), { autoCreate: true });
+const reposDir = process.env.REPOS_DIR || join(__dirname, 'repos');
+const repos = new Git(reposDir, { autoCreate: true });
 const templates = join(__dirname, 'templates');
 const bp = basePath === '/' ? '' : basePath;
 
@@ -25,7 +26,7 @@ function isValidRepoName(name) {
 }
 
 async function repoInfo(name) {
-  const dir = join(__dirname, 'repos', name.endsWith('.git') ? name : name + '.git');
+  const dir = join(reposDir, name.endsWith('.git') ? name : name + '.git');
   if (!fs.existsSync(dir)) return null;
   const countOut = await git(dir, ['count-objects', '-vH']).catch(() => '');
   const sizeMatch = countOut.match(/size-pack:\s*([\d.]+)\s*(B|KiB|MiB|GiB)/i);

@@ -29,6 +29,7 @@ pm2 start ecosystem.config.js
 - Bare Git repo hosting (push/fetch over HTTP)
 - Web UI listing repos with branches and sizes
 - Auto-create repos on first push
+- Configurable repos directory via `REPOS_DIR` env var
 - Path-based routing via `BASE_PATH` env var
 
 ## Comparison with other Git hosting tools
@@ -69,3 +70,4 @@ We don't regularly check for feature changes in other products, so this list may
 |----------|---------|-------------|
 | `PORT` | `7005` | Server port |
 | `BASE_PATH` | `/` | URL base path (e.g. `/repos`) |
+| `REPOS_DIR` | `repos` next to `server.js` | Directory holding the bare repositories (absolute, or relative to the working directory) |
