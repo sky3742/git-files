@@ -7,6 +7,17 @@ const fs = require('fs');
 const port = process.env.PORT || 7005;
 const basePath = process.env.BASE_PATH || '/';
 const reposDir = process.env.REPOS_DIR || join(__dirname, 'repos');
+// fail fast: a bad REPOS_DIR otherwise only surfaces as a confusing git "access rights" error on push
+if (reposDir.startsWith('~')) {
+  console.error(`invalid REPOS_DIR "${reposDir}": "~" is not expanded in .env files, use an absolute path`);
+  process.exit(1);
+}
+try {
+  fs.mkdirSync(reposDir, { recursive: true });
+} catch (err) {
+  console.error(`invalid REPOS_DIR "${reposDir}": ${err.message}`);
+  process.exit(1);
+}
 const repos = new Git(reposDir, { autoCreate: true });
 const templates = join(__dirname, 'templates');
 const bp = basePath === '/' ? '' : basePath;
