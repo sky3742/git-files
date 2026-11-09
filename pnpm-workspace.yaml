@@ -1,0 +1,2 @@
+allowBuilds:
+  node-git-server: false
